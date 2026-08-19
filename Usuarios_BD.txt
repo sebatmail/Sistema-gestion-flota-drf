@@ -1,0 +1,15 @@
+==================================================
+CUENTAS DE ACCESO PARA EVALUACIÓN (INACAP):
+==================================================
+1) Administrador (Superusuario):
+   Usuario:    admin
+   Contraseña: admin123
+
+2) Profesor (Superusuario):
+   Usuario:    profe
+   Contraseña: 123456
+
+3) Chofer (Operador):
+   Usuario:    chofer_a
+   Contraseña: chofer123
+==================================================

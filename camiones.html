@@ -1,0 +1,341 @@
+{% extends 'base.html' %}
+{% block title %}Gestión de Camiones | Panel de Control{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+  <div>
+    <h2 class="fw-bold mb-0 text-dark"><i class="bi bi-truck text-danger me-2"></i>Gestión de Camiones y Flota</h2>
+    <p class="text-muted small mb-0">Control de capacidad de carga, patentes únicas y especificaciones técnicas.</p>
+  </div>
+  <div class="d-flex gap-2">
+    <button class="btn btn-outline-secondary btn-sm" onclick="cargarCamiones()"><i class="bi bi-arrow-clockwise"></i> Refrescar</button>
+    <a href="{% url 'choferes_page' %}" class="btn btn-outline-danger btn-sm"><i class="bi bi-person-badge"></i> Ver Choferes</a>
+  </div>
+</div>
+
+<div class="row g-4">
+  {% if user.is_staff %}
+  <!-- Formulario Agregar / Editar Camión -->
+  <div class="col-lg-4">
+    <div class="card shadow-sm border-0 sticky-top" style="top: 85px; z-index: 10;">
+      <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3">
+        <h5 class="card-title mb-0 fs-6 fw-bold" id="camionFormTitle">
+          <i class="bi bi-plus-circle text-success me-2" id="camionFormIcon"></i><span id="camionFormTitleText">Agregar Nuevo Camión</span>
+        </h5>
+        <span class="badge bg-warning text-dark d-none" id="camionEditBadge">Modo Edición</span>
+      </div>
+      <div class="card-body p-3">
+        <form id="camionForm">
+          <input type="hidden" id="camionId" value="" />
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Patente / Placa <span class="text-danger">*</span></label>
+            <div class="input-group input-group-sm">
+              <span class="input-group-text"><i class="bi bi-card-heading"></i></span>
+              <input
+                type="text"
+                id="patente"
+                class="form-control"
+                placeholder="Ej: AB123CD o BB-CL-44"
+                required
+              />
+            </div>
+            <div class="form-text text-muted" style="font-size: 0.75rem;">Identificador único del vehículo.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Marca del Fabricante <span class="text-danger">*</span></label>
+            <div class="input-group input-group-sm">
+              <span class="input-group-text"><i class="bi bi-tag"></i></span>
+              <input
+                type="text"
+                id="marca"
+                class="form-control"
+                placeholder="Ej: Volvo, Scania, Mercedes-Benz"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Modelo / Línea <span class="text-danger">*</span></label>
+            <div class="input-group input-group-sm">
+              <span class="input-group-text"><i class="bi bi-truck-front"></i></span>
+              <input
+                type="text"
+                id="modelo"
+                class="form-control"
+                placeholder="Ej: FH16, Actros 2651"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Capacidad de Carga (Toneladas) <span class="text-danger">*</span></label>
+            <div class="input-group input-group-sm">
+              <span class="input-group-text"><i class="bi bi-speedometer"></i></span>
+              <input
+                type="number"
+                step="0.01"
+                id="capacidad"
+                class="form-control"
+                placeholder="Ej: 25.50"
+                required
+              />
+              <span class="input-group-text">Ton</span>
+            </div>
+          </div>
+
+          <div class="d-flex gap-2 pt-2">
+            <button type="submit" class="btn btn-success flex-grow-1" id="submitCamionBtn">
+              <i class="bi bi-check-lg me-1"></i> <span id="submitCamionBtnText">Guardar Camión</span>
+            </button>
+            <button type="button" class="btn btn-secondary d-none" id="cancelCamionEditBtn" onclick="cancelarEdicionCamion()">
+              <i class="bi bi-x-lg"></i> Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Tabla de Camiones -->
+  <div class="{% if user.is_staff %}col-lg-8{% else %}col-lg-12{% endif %}">
+    <div class="card shadow-sm border-0">
+      <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0 fw-bold fs-6">
+          <i class="bi bi-truck-flatbed text-primary me-2"></i>Parque Automotor de Camiones
+        </h5>
+        <span class="badge bg-primary rounded-pill" id="totalCamionesBadge">0 Camiones</span>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-dark">
+              <tr>
+                <th class="ps-3">Patente</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Capacidad Máxima</th>
+                {% if user.is_staff %}
+                <th class="text-end pe-3" style="min-width: 170px;">Acciones</th>
+                {% endif %}
+              </tr>
+            </thead>
+            <tbody id="camionesTableBody">
+              <tr>
+                <td colspan="{% if user.is_staff %}5{% else %}4{% endif %}" class="text-center py-4 text-muted">
+                  <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                  Cargando catálogo de camiones...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  let camionesData = [];
+
+  const getCookie = (name) => {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+  };
+
+  const csrftoken = getCookie('csrftoken');
+  const isStaff = {% if user.is_staff %}true{% else %}false{% endif %};
+
+  // Cargar camiones desde la API REST DRF
+  async function cargarCamiones() {
+      try {
+        const res = await fetch('/api/camiones/');
+        if (!res.ok) {
+          document.getElementById('camionesTableBody').innerHTML = `
+            <tr><td colspan="${isStaff ? 5 : 4}" class="text-center text-danger py-4">Error al cargar datos. Inicia sesión nuevamente.</td></tr>`;
+          return;
+        }
+        camionesData = await res.json();
+        const tbody = document.getElementById('camionesTableBody');
+        const badge = document.getElementById('totalCamionesBadge');
+        badge.textContent = `${camionesData.length} Camión${camionesData.length === 1 ? '' : 'es'}`;
+
+        if (camionesData.length === 0) {
+          tbody.innerHTML = `
+            <tr><td colspan="${isStaff ? 5 : 4}" class="text-center py-4 text-muted">No hay camiones registrados en la flota.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = '';
+        camionesData.forEach(c => {
+            let actionTd = '';
+            if (isStaff) {
+              actionTd = `
+                <td class="text-end pe-3">
+                  <div class="btn-group btn-group-sm">
+                    <button class="btn btn-warning" onclick="editarCamion(${c.id})" title="Editar Camión">
+                      <i class="bi bi-pencil-square"></i> Editar
+                    </button>
+                    <button class="btn btn-danger" onclick="eliminarCamion(${c.id}, '${c.patente}')" title="Eliminar Camión">
+                      <i class="bi bi-trash"></i> Eliminar
+                    </button>
+                  </div>
+                </td>`;
+            }
+
+            tbody.innerHTML += `
+                <tr id="row-camion-${c.id}">
+                    <td class="ps-3"><span class="badge bg-dark fs-6 px-3 py-2 border border-secondary">${c.patente}</span></td>
+                    <td class="fw-semibold text-dark">${c.marca}</td>
+                    <td>${c.modelo}</td>
+                    <td><span class="badge bg-success-subtle text-success border border-success fw-bold">${c.capacidad_toneladas} Ton</span></td>
+                    ${actionTd}
+                </tr>`;
+        });
+      } catch (err) {
+        console.error(err);
+        showToast('Error de conexión con la API de camiones', 'danger');
+      }
+  }
+
+  // Activar Modo Edición de Camión con datos precargados
+  function editarCamion(id) {
+    if (!isStaff) return;
+    const camion = camionesData.find(c => c.id === id);
+    if (!camion) return;
+
+    // Precargar inputs
+    document.getElementById('camionId').value = camion.id;
+    document.getElementById('patente').value = camion.patente;
+    document.getElementById('marca').value = camion.marca;
+    document.getElementById('modelo').value = camion.modelo;
+    document.getElementById('capacidad').value = camion.capacidad_toneladas;
+
+    // Cambiar estado visual del formulario
+    document.getElementById('camionFormTitleText').textContent = `Editar Camión (${camion.patente})`;
+    document.getElementById('camionFormIcon').className = 'bi bi-pencil-square text-warning me-2';
+    document.getElementById('submitCamionBtnText').textContent = 'Guardar Cambios';
+    document.getElementById('submitCamionBtn').className = 'btn btn-warning flex-grow-1';
+    document.getElementById('camionEditBadge').classList.remove('d-none');
+    document.getElementById('cancelCamionEditBtn').classList.remove('d-none');
+
+    // Resaltar fila seleccionada
+    document.querySelectorAll('#camionesTableBody tr').forEach(tr => tr.classList.remove('table-warning'));
+    const row = document.getElementById(`row-camion-${id}`);
+    if (row) row.classList.add('table-warning');
+
+    // Scroll suave hacia el formulario
+    document.getElementById('camionForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    showToast(`Editando camión patente: ${camion.patente}`, 'primary');
+  }
+
+  // Cancelar Modo Edición de Camión
+  function cancelarEdicionCamion() {
+    if (!isStaff) return;
+    document.getElementById('camionForm').reset();
+    document.getElementById('camionId').value = '';
+    document.getElementById('camionFormTitleText').textContent = 'Agregar Nuevo Camión';
+    document.getElementById('camionFormIcon').className = 'bi bi-plus-circle text-success me-2';
+    document.getElementById('submitCamionBtnText').textContent = 'Guardar Camión';
+    document.getElementById('submitCamionBtn').className = 'btn btn-success flex-grow-1';
+    document.getElementById('camionEditBadge').classList.add('d-none');
+    document.getElementById('cancelCamionEditBtn').classList.add('d-none');
+    document.querySelectorAll('#camionesTableBody tr').forEach(tr => tr.classList.remove('table-warning'));
+  }
+
+  // Submit Camión (Crear o Actualizar/Editar vía API DRF)
+  if (isStaff) {
+      document.getElementById('camionForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const id = document.getElementById('camionId').value;
+          const payload = {
+              patente: document.getElementById('patente').value.trim().toUpperCase(),
+              marca: document.getElementById('marca').value.trim(),
+              modelo: document.getElementById('modelo').value.trim(),
+              capacidad_toneladas: parseFloat(document.getElementById('capacidad').value)
+          };
+
+          const isEditing = Boolean(id);
+          const url = isEditing ? `/api/camiones/${id}/` : '/api/camiones/';
+          const method = isEditing ? 'PUT' : 'POST';
+
+          try {
+            const res = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                showToast(
+                  isEditing ? `Camión "${payload.patente}" actualizado correctamente` : `Camión "${payload.patente}" agregado con éxito`,
+                  'success'
+                );
+                cancelarEdicionCamion();
+                cargarCamiones();
+            } else {
+                let errorMsg = 'Error al procesar el camión: ';
+                for (let key in data) {
+                  errorMsg += `${key}: ${data[key]} `;
+                }
+                alert(errorMsg);
+                showToast(errorMsg, 'danger');
+            }
+          } catch (err) {
+            console.error(err);
+            showToast('Error de red al guardar el camión', 'danger');
+          }
+      });
+  }
+
+  // Eliminar Camión vía API DRF DELETE
+  async function eliminarCamion(id, patente) {
+     if (confirm(`¿Está seguro de eliminar el camión con patente "${patente}" (ID: ${id})?\nEsta acción no se puede deshacer.`)) {
+          try {
+            const res = await fetch(`/api/camiones/${id}/`, {
+                method: 'DELETE',
+                headers: { 'X-CSRFToken': csrftoken }
+            });
+            if (res.ok) {
+              showToast(`Camión "${patente}" eliminado correctamente`, 'success');
+              if (document.getElementById('camionId') && document.getElementById('camionId').value == id) {
+                cancelarEdicionCamion();
+              }
+              cargarCamiones();
+            } else {
+              showToast('No se pudo eliminar el camión. Verifique si tiene un chofer asignado.', 'danger');
+            }
+          } catch (err) {
+            console.error(err);
+            showToast('Error de conexión al eliminar', 'danger');
+          }
+      }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    cargarCamiones();
+  });
+</script>
+{% endblock %}
+

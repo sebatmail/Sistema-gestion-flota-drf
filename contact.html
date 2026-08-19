@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% block title %}Contáctanos | TransLog INACAP{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="card shadow-sm p-4 bg-white">
+      <h2 class="fw-bold text-dark border-bottom pb-2">
+        <i class="bi bi-envelope-at text-danger"></i> Contáctanos
+      </h2>
+      <p class="text-secondary mb-0">
+        Estamos aquí para ayudarte. Completa el siguiente formulario y nos pondremos en contacto contigo a la brevedad.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card shadow-sm p-4 bg-white">
+      <h5 class="fw-bold text-dark mb-3"><i class="bi bi-send text-danger me-2"></i>Formulario de Consulta</h5>
+
+      {% if success %}
+      <div class="alert alert-success d-flex align-items-center gap-2 mb-4" role="alert">
+        <i class="bi bi-check-circle-fill fs-4"></i>
+        <div>
+          <strong>¡Mensaje enviado con éxito!</strong><br />
+          Gracias, {{ nombre }}. Tu consulta ha sido recibida correctamente por el equipo logístico.
+        </div>
+      </div>
+      {% endif %}
+
+      <form method="POST" action="{% url 'contact_page' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="nombre" class="form-label fw-semibold">Nombre Completo <span class="text-danger">*</span></label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-person"></i></span>
+            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ej: Marcelo Alvarado" required />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="email" class="form-label fw-semibold">Correo Electrónico <span class="text-danger">*</span></label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+            <input type="email" class="form-control" id="email" name="email" placeholder="nombre@inacap.cl" required />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="telefono" class="form-label fw-semibold">Teléfono de Contacto</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+            <input type="text" class="form-control" id="telefono" name="telefono" placeholder="+56 9 1234 5678" />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="mensaje" class="form-label fw-semibold">Mensaje o Solicitud <span class="text-danger">*</span></label>
+          <textarea class="form-control" id="mensaje" name="mensaje" rows="4" placeholder="Escribe tu mensaje o consulta respecto al sistema de flota..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-danger btn-lg px-4" style="background-color: #D6001C;">
+          <i class="bi bi-envelope-paper-fill me-2"></i> Enviar Mensaje
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card shadow-sm p-4 bg-dark text-white h-100" style="background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);">
+      <h4 class="fw-bold text-warning mb-3">
+        <i class="bi bi-geo-alt-fill"></i> Información de Contacto
+      </h4>
+      <p class="text-white-50 small mb-4">
+        Sede Central y Soporte Técnico de la Plataforma de Gestión de Flota:
+      </p>
+
+      <ul class="list-unstyled d-flex flex-column gap-3 mb-4">
+        <li class="d-flex align-items-start gap-3">
+          <i class="bi bi-building fs-4 text-danger"></i>
+          <div>
+            <strong>Dirección:</strong>
+            <div class="text-white-70 small">Av. Vicuña Mackenna #2598, Sede INACAP</div>
+          </div>
+        </li>
+        <li class="d-flex align-items-start gap-3">
+          <i class="bi bi-telephone-fill fs-4 text-primary"></i>
+          <div>
+            <strong>Teléfono:</strong>
+            <div class="text-white-70 small">(+56 2) 2555-7890</div>
+          </div>
+        </li>
+        <li class="d-flex align-items-start gap-3">
+          <i class="bi bi-envelope-fill fs-4 text-success"></i>
+          <div>
+            <strong>Correo Electrónico:</strong>
+            <div class="text-white-70 small">contacto.flota@inacapmail.cl</div>
+          </div>
+        </li>
+        <li class="d-flex align-items-start gap-3">
+          <i class="bi bi-clock-fill fs-4 text-warning"></i>
+          <div>
+            <strong>Horario de Atención:</strong>
+            <div class="text-white-70 small">Lunes a Viernes: 08:30 - 18:30 hrs</div>
+          </div>
+        </li>
+      </ul>
+
+      <div class="mt-auto p-3 rounded bg-secondary bg-opacity-25 border border-secondary">
+        <small class="text-white-50">
+          <i class="bi bi-info-circle text-info me-1"></i> Asignatura: <strong>Backend</strong> | Informática y Ciberseguridad
+        </small>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

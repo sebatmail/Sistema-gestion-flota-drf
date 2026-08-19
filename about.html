@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}Quiénes Somos | TransLog - Gestión de Flotas{% endblock %}
+
+{% block content %}
+<div class="row g-4 mb-4">
+  <div class="col-lg-8">
+    <div class="card shadow-sm p-4 h-100 bg-white">
+      <h2 class="fw-bold mb-3 text-dark border-bottom pb-2">
+        <i class="bi bi-building text-danger"></i> Quiénes Somos
+      </h2>
+      <p class="lead text-secondary">
+        Somos una empresa especializada en soluciones tecnológicas para la gestión y administración de flotas de transporte terrestre, logística de carga y control operativo de conductores.
+      </p>
+      <p class="text-muted">
+        Fundada con el propósito de optimizar los procesos de transporte de carga y distribución a nivel nacional, nuestra plataforma integra un backend robusto basado en <strong>Django REST Framework</strong> con una arquitectura de datos relacional de alta integridad.
+      </p>
+
+      <div class="row mt-4 g-3">
+        <div class="col-md-6">
+          <div class="border-start border-danger border-4 ps-3 py-2 bg-light rounded">
+            <h5 class="fw-bold mb-1 text-dark"><i class="bi bi-bullseye text-danger"></i> Nuestra Misión</h5>
+            <p class="small text-muted mb-0">
+              Proporcionar herramientas tecnológicas intuitivas, robustas y escalables que permitan la trazabilidad total de vehículos y choferes con máxima seguridad operativa.
+            </p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="border-start border-primary border-4 ps-3 py-2 bg-light rounded">
+            <h5 class="fw-bold mb-1 text-dark"><i class="bi bi-eye text-primary"></i> Nuestra Visión</h5>
+            <p class="small text-muted mb-0">
+              Ser el referente tecnológico en sistemas de control de flota y APIs REST interoperables para el sector logístico y de ciberseguridad industrial.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card shadow-sm p-4 bg-dark text-white h-100" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
+      <h4 class="fw-bold text-warning mb-3">
+        <i class="bi bi-stars"></i> Lo Que Hacemos
+      </h4>
+      <ul class="list-unstyled d-flex flex-column gap-3">
+        <li class="d-flex align-items-start gap-2">
+          <i class="bi bi-check-circle-fill text-success fs-5"></i>
+          <div>
+            <strong>Control de Choferes:</strong>
+            <div class="small text-white-50">Registro, validación de RUT y asignación de licencias oficiales.</div>
+          </div>
+        </li>
+        <li class="d-flex align-items-start gap-2">
+          <i class="bi bi-check-circle-fill text-success fs-5"></i>
+          <div>
+            <strong>Gestión de Camiones:</strong>
+            <div class="small text-white-50">Administración de patentes únicas, tonelaje de carga y modelos.</div>
+          </div>
+        </li>
+        <li class="d-flex align-items-start gap-2">
+          <i class="bi bi-check-circle-fill text-success fs-5"></i>
+          <div>
+            <strong>API RESTful Segura:</strong>
+            <div class="small text-white-50">Intercambio de datos JSON autenticado para aplicaciones web y móviles.</div>
+          </div>
+        </li>
+        <li class="d-flex align-items-start gap-2">
+          <i class="bi bi-check-circle-fill text-success fs-5"></i>
+          <div>
+            <strong>Edición en Tiempo Real:</strong>
+            <div class="small text-white-50">Actualización reactiva sin recargar páginas completas.</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}
